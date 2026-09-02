@@ -1,24 +1,16 @@
-# IA Prof — professeur virtuel Android hors ligne
+# IA Prof 3.0 — assistant local Android
 
-IA Prof est une application Android Kotlin avec une interface de conversation inspirée de ChatGPT et Manus. Chaque réponse de l’assistant est générée par le modèle GPT-2 local embarqué : il n’y a pas de réponses prédéfinies, de backend ou d’appel réseau.
+IA Prof est une application Android **100 % hors ligne** écrite en Kotlin et Jetpack Compose. Elle utilise l’API MediaPipe LLM Inference (`tasks-genai:0.10.27`) pour exécuter un modèle génératif local compatible `.task` ou `.bin`.
 
-## Modèle intégré
+## Fonctionnalités
 
-- Modèle : **OpenAI GPT-2 124M, variante TFLite 8 bits `64-8bits.tflite`**
-- Source : [`openai-community/gpt2`](https://huggingface.co/openai-community/gpt2)
-- Licence : MIT
-- Taille du modèle : environ **120 Mo**
-- Tokenizer intégré : `vocab.json` et `merges.txt` du tokenizer byte-level BPE GPT-2
-- Entrée vérifiée : `int32 [1, 64]`
-- Sortie principale vérifiée : logits `float32 [1, 64, 50257]`
+L’interface propose un chat moderne avec messages utilisateur/assistant, états `Modèle non trouvé`, `Chargement du modèle en RAM…`, `Prêt` et `Génération…`, ainsi qu’un sélecteur Storage Access Framework pour choisir un modèle présent sur le téléphone. Si un fichier `model.task` est placé dans `app/src/main/assets`, il est chargé automatiquement ; sinon l’utilisateur peut choisir un fichier local.
 
-## Génération réelle
+Les réponses sont reçues en streaming via `generateResponseAsync`. Le moteur est créé sur `Dispatchers.Default`, utilise une fenêtre maximale de 512 tokens, tente le backend GPU puis recrée automatiquement le moteur en CPU si le GPU n’est pas compatible. Les erreurs de fichier invalide et de mémoire sont affichées dans l’interface sans faire tomber l’application. `LlmInference.close()` est appelé lors du remplacement du modèle et dans `ViewModel.onCleared()`.
 
-Pour chaque message, l’application encode le texte avec le BPE GPT-2, exécute le modèle TFLite sur la fenêtre courante, lit les logits de la dernière position et choisit le token suivant par argmax. La boucle est répétée token par token jusqu’à 24 tokens ou EOS. La conversation affiche séparément les messages utilisateur et les réponses générées, avec défilement automatique.
+## Modèle
 
-## Hors ligne et confidentialité
-
-Le modèle, le tokenizer et le moteur d’inférence sont inclus dans l’APK. Le manifeste ne déclare aucune permission Internet. Les messages restent dans la mémoire de l’écran pendant la session et ne sont envoyés à aucun serveur.
+Le projet ne télécharge aucun modèle et ne fait aucune vérification de licence en ligne. Il est volontairement livré sans gros modèle dans `assets`, car les modèles Gemma/Llama `.task` font souvent plusieurs centaines de Mo et dépassent les limites pratiques d’un APK. L’utilisateur peut placer son modèle MediaPipe compatible en asset ou le sélectionner localement. Exemples : Gemma 2B IT INT4, Gemma 3 1B ou Llama 3.2 1B dans un format pris en charge par MediaPipe.
 
 ## Compilation
 
@@ -27,8 +19,8 @@ export ANDROID_HOME="$PWD/sdk"
 ./gradlew assembleDebug
 ```
 
-L’APK est signé avec la clé debug standard et cible Android 7 / API 21 ou supérieur. La taille finale est d’environ 133 Mo en raison du modèle GPT-2.
+Package : `com.iaprof.app`. Android minimum : API 24. Le manifeste ne déclare aucune permission Internet. Le fichier produit est `app/build/outputs/apk/debug/app-debug.apk`.
 
-## Limites
+## Note API
 
-GPT-2 a été entraîné principalement en anglais et n’est pas spécialisé dans le tutorat en français. Ses réponses peuvent être imparfaites ou incohérentes. Le modèle est toutefois un vrai modèle génératif : les textes produits ne proviennent pas d’une liste de réponses codées en dur.
+La documentation Google indique que MediaPipe LLM Inference est désormais en maintenance et recommande LiteRT-LM pour les nouveaux projets. Cette version conserve MediaPipe afin de respecter le cahier des charges demandé et d’exposer directement `LlmInferenceOptions`, le backend GPU/CPU et le streaming Android.
