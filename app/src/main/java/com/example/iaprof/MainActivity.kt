@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         try {
             tokenizer = Gpt2Tokenizer(this)
             interpreter = Interpreter(loadModel(), Interpreter.Options().apply { setNumThreads(2) })
-            findViewById<Button>(R.id.generate).setOnClickListener { generateAsync() }
+            findViewById<ImageButton>(R.id.generate).setOnClickListener { generateAsync() }
         } catch (e: Exception) {
             output.text = "Impossible de charger le modèle GPT-2 local : ${e.message}"
         }
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private fun generateAsync() {
         val prompt = input.text.toString().trim()
         if (prompt.isEmpty()) { output.text = "Écris une question pour commencer."; return }
-        val button = findViewById<Button>(R.id.generate)
+        val button = findViewById<ImageButton>(R.id.generate)
         button.isEnabled = false; output.text = "Génération locale GPT-2…"
         Thread {
             val answer = generateText(prompt, 24)
