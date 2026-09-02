@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="20dp" android:background="#F7F8FC">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="IA Prof" android:textSize="30sp" android:textStyle="bold" android:textColor="#172554" android:layout_marginBottom="4dp"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Un professeur compact, 100 % hors ligne" android:textSize="15sp" android:textColor="#475569" android:layout_marginBottom="18dp"/>
+    <EditText android:id="@+id/prompt" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:hint="Pose ta question…" android:text="Explique-moi ce qu'est une fraction" android:inputType="textCapSentences|textMultiLine" android:padding="14dp" android:backgroundTint="#4F46E5"/>
+    <Button android:id="@+id/generate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="GÉNÉRER" android:textAllCaps="false" android:layout_marginTop="12dp"/>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="18dp" android:background="#FFFFFF" android:padding="16dp">
+        <TextView android:id="@+id/response" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="La réponse apparaîtra ici." android:textSize="17sp" android:lineSpacingExtra="5dp" android:textColor="#1E293B"/>
+    </ScrollView>
+</LinearLayout>
