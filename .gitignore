@@ -1,6 +1,8 @@
 sdk/
 .gradle/
 app/build/
+app/src/main/assets/gpt2/gpt2-64-8bits.tflite
+IAProf-source.zip
 *.iml
 .idea/
 local.properties
